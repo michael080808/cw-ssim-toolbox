@@ -28,10 +28,10 @@ class LevelAlpha1MonoAxisOperator(_LevelBasicMonoAxisOperator):
 
 
 class LevelOthersMonoAxisOperator(_LevelBasicMonoAxisOperator):
-    def __init__(self, coef_a: cupy.ndarray, coef_b: cupy.ndarray):
+    def __init__(self, coef_a: numpy.ndarray, coef_b: numpy.ndarray):
         assert len(coef_a) == len(coef_b)
         assert len(coef_a) % 0x02 == 0x00
-        self.coef_a, self.coef_b = coef_a, coef_b
+        self.coef_a, self.coef_b = cupy.asarray(coef_a), cupy.asarray(coef_b)
         self.calc_c = cupy.sum(self.coef_a * self.coef_b)
 
     def forward(self, tensor: cupy.ndarray, axis: int) -> cupy.ndarray:

@@ -21,11 +21,11 @@ class LevelCommonReformatOperator:
 
     @property
     def cplx_forward(self):
-        return cupy.kron([[1.0, +1j], [1.0, -1j]], cupy.eye(2 ** (self.dimension - 1)))
+        return cupy.kron(cupy.asarray([[1.0, +1j], [1.0, -1j]]), cupy.eye(2 ** (self.dimension - 1)))
 
     @property
     def cplx_reverse(self):
-        return cupy.kron([[1.0, 1.0], [-1j, +1j]], cupy.eye(2 ** (self.dimension - 1)))
+        return cupy.kron(cupy.asarray([[1.0, 1.0], [-1j, +1j]]), cupy.eye(2 ** (self.dimension - 1)))
 
     @property
     def prod_forward(self):
@@ -69,8 +69,8 @@ class LevelCommonReformatOperator:
     def dual_partial(self):
         partial_real, partial_imag = cupy.ones([1, 1]), cupy.ones([1, 1])
         for _ in range(1, self.dimension):
-            partial_real, partial_imag = (cupy.kron([[+1, +0], [+1, +0]], partial_real) + cupy.kron([[-0, -1], [+0, +1]], partial_imag),
-                                          cupy.kron([[+1, +0], [+1, +0]], partial_real) + cupy.kron([[+0, +1], [-0, -1]], partial_imag))
+            partial_real, partial_imag = (cupy.kron(cupy.asarray([[+1, +0], [+1, +0]]), partial_real) + cupy.kron(cupy.asarray([[-0, -1], [+0, +1]]), partial_imag),
+                                          cupy.kron(cupy.asarray([[+1, +0], [+1, +0]]), partial_real) + cupy.kron(cupy.asarray([[+0, +1], [-0, -1]]), partial_imag))
         return partial_real, partial_imag
 
     @property
