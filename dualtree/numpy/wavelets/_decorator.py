@@ -14,28 +14,35 @@ def __assert__(attr):
         raise TypeError(f'Attribute \'{attr.__name__}\' should be a Class member function with \'self\' as parameter and without other parameters' % attr)
 
 
-def temporary(attr):
-    __assert__(attr)
+def temporary(prefix: str = '__', suffix: str = '__'):
+    assert isinstance(prefix, str)
+    assert isinstance(suffix, str)
+    assert len(prefix + suffix) > 0
 
-    @wraps(attr)
-    def wrapper(self):
-        if not hasattr(self, f'__{attr.__name__}__'):
-            result = attr(self)
-        elif numpy.issubdtype((values := getattr(self, f'__{attr.__name__}__')).dtype, (d_type := getattr(self, f'dtype'))):
-            result = values
-        elif numpy.finfo(values.dtype).bits > numpy.finfo(d_type).bits:
-            result = values.astype(d_type)
-        else:
-            result = attr(self)
+    def decorator(attr):
+        __assert__(attr)
 
-        if not hasattr(self, f'__{attr.__name__}__'):
-            setattr(self, f'__{attr.__name__}__', result)
-        elif numpy.finfo(result.dtype).bits > numpy.finfo(getattr(self, f'__{attr.__name__}__').dtype).bits:
-            setattr(self, f'__{attr.__name__}__', result)
+        @wraps(attr)
+        def wrapper(self):
+            if not hasattr(self, f'__{attr.__name__}__'):
+                result = attr(self)
+            elif numpy.issubdtype((values := getattr(self, f'__{attr.__name__}__')).dtype, (d_type := getattr(self, f'dtype'))):
+                result = values
+            elif numpy.finfo(values.dtype).bits > numpy.finfo(d_type).bits:
+                result = values.astype(d_type)
+            else:
+                result = attr(self)
 
-        return result
+            if not hasattr(self, f'__{attr.__name__}__'):
+                setattr(self, f'__{attr.__name__}__', result)
+            elif numpy.finfo(result.dtype).bits > numpy.finfo(getattr(self, f'__{attr.__name__}__').dtype).bits:
+                setattr(self, f'__{attr.__name__}__', result)
 
-    return wrapper
+            return result
+
+        return wrapper
+
+    return decorator
 
 
 def persisted(rdir: str = os.path.join(os.path.dirname(__file__), 'buffer')):
@@ -50,8 +57,8 @@ def persisted(rdir: str = os.path.join(os.path.dirname(__file__), 'buffer')):
         def wrapper(self):
             if not os.path.exists(path := os.path.join(rdir, self.__class__.__name__, f'{attr.__name__}')):
                 os.makedirs(path)
-
-            if os.path.exists(f_name := os.path.join(path, f'{dtype.name if isinstance(dtype := getattr(self, 'dtype'), numpy.dtype) else dtype.__name__}.{numpy.finfo(dtype).bits:03d}.npy')):
+            d_name = dtype.name if isinstance(dtype := getattr(self, 'dtype'), numpy.dtype) else dtype.__name__
+            if os.path.exists(f_name := os.path.join(path, f'{d_name}.{numpy.finfo(dtype).bits:03d}.npy')):
                 result = numpy.load(f_name)
             else:
                 others = sorted([

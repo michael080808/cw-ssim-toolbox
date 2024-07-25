@@ -32,14 +32,14 @@ class _NearSymmetricWavelet(BiorthogonalWavelet):
             self.M = numpy.array([1, 0, 1]) / 2
 
     @cached_property
-    @temporary
+    @temporary()
     @persisted()
     @validator()
     def lo_pass_channelizer(self) -> numpy.ndarray:
         return self.normalize(self.xfm(self.Ft, self.M))
 
     @cached_property
-    @temporary
+    @temporary()
     @persisted()
     @validator()
     def lo_pass_synthesiser(self) -> numpy.ndarray:
@@ -48,14 +48,14 @@ class _NearSymmetricWavelet(BiorthogonalWavelet):
 
 class HaarWavelet(BiorthogonalWavelet):
     @cached_property
-    @temporary
+    @temporary()
     @persisted()
     @validator()
     def lo_pass_channelizer(self) -> numpy.ndarray:
         return self.normalize(numpy.array([+1, +1], dtype=numpy.int64))
 
     @cached_property
-    @temporary
+    @temporary()
     @persisted()
     @validator()
     def lo_pass_synthesiser(self) -> numpy.ndarray:
@@ -64,14 +64,14 @@ class HaarWavelet(BiorthogonalWavelet):
 
 class LeGallWavelet(BiorthogonalWavelet):
     @cached_property
-    @temporary
+    @temporary()
     @persisted()
     @validator()
     def lo_pass_channelizer(self) -> numpy.ndarray:
         return self.normalize(numpy.array([-1, +2, +6, +2, -1], dtype=numpy.int64))
 
     @cached_property
-    @temporary
+    @temporary()
     @persisted()
     @validator()
     def lo_pass_synthesiser(self) -> numpy.ndarray:
@@ -80,14 +80,14 @@ class LeGallWavelet(BiorthogonalWavelet):
 
 class BiorthogonalT06T10Wavelet(BiorthogonalWavelet):
     @cached_property
-    @temporary
+    @temporary()
     @persisted()
     @validator()
     def lo_pass_channelizer(self) -> numpy.ndarray:
         return self.normalize(numpy.convolve(numpy.array([+1, +3, +3, +1], dtype=numpy.int64), numpy.array([-1, +4, -1], dtype=numpy.int64)))
 
     @cached_property
-    @temporary
+    @temporary()
     @persisted()
     @validator()
     def lo_pass_synthesiser(self) -> numpy.ndarray:
@@ -96,14 +96,14 @@ class BiorthogonalT06T10Wavelet(BiorthogonalWavelet):
 
 class BiorthogonalT06T10ComplexWavelet(BiorthogonalWavelet):
     @cached_property
-    @temporary
+    @temporary()
     @persisted()
     @validator()
     def lo_pass_channelizer(self) -> numpy.ndarray:
         return self.normalize(numpy.array([+1, -1, +8, +8, -1, +1], dtype=numpy.int64))
 
     @cached_property
-    @temporary
+    @temporary()
     @persisted()
     @validator()
     def lo_pass_synthesiser(self) -> numpy.ndarray:
@@ -116,14 +116,14 @@ class AntoniniWavelet(BiorthogonalWavelet):
         self.roots = numpy.roots(numpy.array([+5, -40, +131, -208, 131, -40, +5], dtype=self.dtype))
 
     @cached_property
-    @temporary
+    @temporary()
     @persisted()
     @validator()
     def lo_pass_channelizer(self) -> numpy.ndarray:
         return self.normalize(numpy.real(numpy.poly([-1] * 4 + self.roots[1: 5: 1].tolist())))
 
     @cached_property
-    @temporary
+    @temporary()
     @persisted()
     @validator()
     def lo_pass_synthesiser(self) -> numpy.ndarray:
@@ -136,14 +136,14 @@ class DaubechiesT04T04Wavelet(BiorthogonalWavelet):
         self.roots = numpy.roots(numpy.array([-1, +4, -1], dtype=self.dtype))
 
     @cached_property
-    @temporary
+    @temporary()
     @persisted()
     @validator()
     def lo_pass_channelizer(self) -> numpy.ndarray:
         return self.normalize(numpy.real(numpy.poly([-1] * 2 + self.roots[[0]].tolist())))
 
     @cached_property
-    @temporary
+    @temporary()
     @persisted()
     @validator()
     def lo_pass_synthesiser(self) -> numpy.ndarray:
@@ -156,14 +156,14 @@ class DaubechiesT06T06Wavelet(BiorthogonalWavelet):
         self.roots = numpy.roots(numpy.array([+3, -18, +38, -18, +3], dtype=self.dtype))
 
     @cached_property
-    @temporary
+    @temporary()
     @persisted()
     @validator()
     def lo_pass_channelizer(self) -> numpy.ndarray:
         return self.normalize(numpy.real(numpy.poly([-1] * 3 + self.roots[[0, 1]].tolist())))
 
     @cached_property
-    @temporary
+    @temporary()
     @persisted()
     @validator()
     def lo_pass_synthesiser(self) -> numpy.ndarray:
@@ -176,14 +176,14 @@ class DaubechiesT08T08Wavelet(BiorthogonalWavelet):
         self.roots = numpy.roots(numpy.array([+5, -40, +131, -208, 131, -40, +5], dtype=self.dtype))
 
     @cached_property
-    @temporary
+    @temporary()
     @persisted()
     @validator()
     def lo_pass_channelizer(self) -> numpy.ndarray:
         return self.normalize(numpy.real(numpy.poly([-1] * 4 + self.roots[[0, 3, 4]].tolist())))
 
     @cached_property
-    @temporary
+    @temporary()
     @persisted()
     @validator()
     def lo_pass_synthesiser(self) -> numpy.ndarray:

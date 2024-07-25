@@ -104,7 +104,7 @@ class _QShiftWavelet(OrthogonalWavelet):
         return numpy.pad(middle[0], (0, 2))
 
     @cached_property
-    @temporary
+    @temporary()
     @persisted()
     @validator()
     def lo_pass_channelizer(self) -> numpy.ndarray:
