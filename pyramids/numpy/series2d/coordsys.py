@@ -20,4 +20,3 @@ class CoordSys:
     @abstractmethod
     def groups(self):
         raise NotImplementedError
-
