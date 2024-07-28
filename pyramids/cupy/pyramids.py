@@ -29,7 +29,7 @@ class SteerablePyramid2D:
         result = cupy.zeros_like(data[0][0])
         index: Tuple[slice, slice]
         for times, group, index in zip(data, self.series2d, self.slices2d):
-            freq = [cupy.pad(_fftshift(_fft2(time), axes=(-1, -2)), cupy.array([[abs(bound.start if bound.start else 0), abs(-bound.stop if bound.stop else 0)] for bound in index])) * item for time, item in zip(times, group)]
+            freq = [cupy.pad(_fftshift(_fft2(time), axes=(-1, -2)), [[abs(bound.start if bound.start else 0), abs(-bound.stop if bound.stop else 0)] for bound in index]) * item for time, item in zip(times, group)]
             result = result + functools.reduce(operator.add, freq)
         result = ifft2(ifftshift(result, axes=(-1, -2)))
         return result if self.is_complex else cupy.real(result)

@@ -9,11 +9,11 @@ import numpy
 class _LevelBasicMonoAxisOperator(ABC, metaclass=ABCMeta):
     @abstractmethod
     def forward(self, tensor: cupy.ndarray, axis: int) -> cupy.ndarray:
-        raise NotImplementedError
+        return cupy.asarray(tensor) if not isinstance(tensor, cupy.ndarray) else tensor
 
     @abstractmethod
     def reverse(self, tensor: cupy.ndarray, axis: int) -> cupy.ndarray:
-        raise NotImplementedError
+        return cupy.asarray(tensor) if not isinstance(tensor, cupy.ndarray) else tensor
 
 
 class LevelAlpha1MonoAxisOperator(_LevelBasicMonoAxisOperator):
@@ -21,9 +21,11 @@ class LevelAlpha1MonoAxisOperator(_LevelBasicMonoAxisOperator):
         self.kernel = cupy.asarray(kernel).flatten()
 
     def forward(self, tensor: cupy.ndarray, axis: int) -> cupy.ndarray:
+        tensor = super().forward(tensor, axis=axis)
         return cupyx.scipy.ndimage.convolve1d(tensor, self.kernel, axis=axis, mode='reflect')
 
     def reverse(self, tensor: cupy.ndarray, axis: int) -> cupy.ndarray:
+        tensor = super().reverse(tensor, axis=axis)
         return cupyx.scipy.ndimage.convolve1d(tensor, self.kernel, axis=axis, mode='reflect')
 
 
@@ -35,6 +37,7 @@ class LevelOthersMonoAxisOperator(_LevelBasicMonoAxisOperator):
         self.calc_c = cupy.sum(self.coef_a * self.coef_b)
 
     def forward(self, tensor: cupy.ndarray, axis: int) -> cupy.ndarray:
+        tensor = super().forward(tensor, axis=axis)
         assert tensor.shape[axis] % 4 == 0, f'Rows on Axis {axis} should be completely divisible by 4'
         conv_a = cupy.take(cupyx.scipy.ndimage.convolve1d(tensor, cupy.kron(self.coef_a, cupy.asarray([1, 0])), axis=axis, mode='reflect'), list(range(0, tensor.shape[axis], 4)), axis=axis)
         conv_b = cupy.take(cupyx.scipy.ndimage.convolve1d(tensor, cupy.kron(self.coef_b, cupy.asarray([0, 1])), axis=axis, mode='reflect'), list(range(2, tensor.shape[axis], 4)), axis=axis)
@@ -43,6 +46,7 @@ class LevelOthersMonoAxisOperator(_LevelBasicMonoAxisOperator):
         return cupy.take(concat, [_l * i + j for j in range(_l) for i in range(2)], axis=axis)
 
     def reverse(self, tensor: cupy.ndarray, axis: int) -> cupy.ndarray:
+        tensor = super().reverse(tensor, axis=axis)
         assert tensor.shape[axis] % 2 == 0, f'Rows on Axis {axis} should be completely divisible by 2'
         f_bank = [cupy.kron(self.coef_a[0::2], cupy.asarray([0, 1] if self.calc_c > 0 else [1, 0])), cupy.kron(self.coef_b[0::2], cupy.asarray([1, 0] if self.calc_c > 0 else [0, 1])),
                   cupy.kron(self.coef_a[1::2], cupy.asarray([0, 1] if self.calc_c > 0 else [1, 0])), cupy.kron(self.coef_b[1::2], cupy.asarray([1, 0] if self.calc_c > 0 else [0, 1]))]
