@@ -5,7 +5,7 @@ import numpy
 import scipy
 
 
-class _LevelBasicDetachedAtomicOperator(ABC, metaclass=ABCMeta):
+class _LevelBasicSeparateKernelOperator(ABC, metaclass=ABCMeta):
     @abstractmethod
     def forward(self, tensor: numpy.ndarray, axis: int) -> numpy.ndarray:
         return numpy.asarray(tensor) if not isinstance(tensor, numpy.ndarray) else tensor
@@ -15,7 +15,7 @@ class _LevelBasicDetachedAtomicOperator(ABC, metaclass=ABCMeta):
         return numpy.asarray(tensor) if not isinstance(tensor, numpy.ndarray) else tensor
 
 
-class LevelAlpha1MonoAxisOperator(_LevelBasicDetachedAtomicOperator):
+class LevelAlpha1SeparateKernelOperator(_LevelBasicSeparateKernelOperator):
     def __init__(self, kernel: numpy.ndarray):
         self.kernel = kernel.flatten()
 
@@ -28,7 +28,7 @@ class LevelAlpha1MonoAxisOperator(_LevelBasicDetachedAtomicOperator):
         return scipy.ndimage.convolve1d(tensor, self.kernel, axis=axis, mode='reflect')
 
 
-class LevelOthersMonoAxisOperator(_LevelBasicDetachedAtomicOperator):
+class LevelOthersSeparateKernelOperator(_LevelBasicSeparateKernelOperator):
     def __init__(self, coef_a: numpy.ndarray, coef_b: numpy.ndarray):
         assert len(coef_a) == len(coef_b)
         assert len(coef_a) % 0x02 == 0x00

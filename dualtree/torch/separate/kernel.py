@@ -9,7 +9,7 @@ import torchvision.transforms.v2.functional
 from torch import Tensor
 
 
-class _LevelBasicDetachedAtomicOperator(ABC, metaclass=ABCMeta):
+class _LevelBasicSeparateKernelOperator(ABC, metaclass=ABCMeta):
     @classmethod
     def symmetric_pad(cls, tensor: Tensor, pad: Tuple[int, int], axis: int):
         dim_ln = tensor.shape[axis]
@@ -54,7 +54,7 @@ class _LevelBasicDetachedAtomicOperator(ABC, metaclass=ABCMeta):
         return torch.tensor(tensor) if not isinstance(tensor, Tensor) else tensor
 
 
-class LevelAlpha1DetachedAtomicOperator(_LevelBasicDetachedAtomicOperator):
+class LevelAlpha1SeparateKernelOperator(_LevelBasicSeparateKernelOperator):
     @classmethod
     def convolve1d(cls, tensor: Tensor, weight: Tensor, axis: int, mode: Literal['constant', 'reflect', 'symmetric', 'replicate', 'circular'] = 'symmetric', cval: float = 0.0):
         weight = cls.weight_prepare(weight, device=tensor.device)
@@ -77,7 +77,7 @@ class LevelAlpha1DetachedAtomicOperator(_LevelBasicDetachedAtomicOperator):
         return self.convolve1d(tensor, self.kernel.to(device=tensor.device), axis=axis, mode='symmetric')
 
 
-class LevelOthersDetachedAtomicOperator(_LevelBasicDetachedAtomicOperator):
+class LevelOthersSeparateKernelOperator(_LevelBasicSeparateKernelOperator):
     @classmethod
     def dilation1d(cls, tensor: Tensor, weight: Tensor, stride: int, bias: int, axis: int, mode: Literal['constant', 'reflect', 'symmetric', 'replicate', 'circular'] = 'symmetric', cval: float = 0.0):
         weight = cls.weight_prepare(weight, device=tensor.device)

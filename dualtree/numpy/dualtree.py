@@ -2,9 +2,9 @@ from typing import List, Tuple
 
 import numpy
 
-from .detached_series import LevelAlpha1DetachedSeriesOperator
-from .detached_series import LevelOthersDetachedSeriesOperator
 from .reformat import LevelCommonReformatOperator
+from .separate.series import LevelAlpha1SeparateSeriesOperator
+from .separate.series import LevelOthersSeparateSeriesOperator
 from .wavelets import BiorthogonalWavelet, OrthogonalWavelet
 
 
@@ -12,8 +12,8 @@ class DualTreeComplexWaveletTransform:
     def __init__(self, levels: int, dimension: int, level_alpha1: BiorthogonalWavelet, level_others: OrthogonalWavelet):
         assert levels > 0 and dimension > 0
         self.levels, self.level_common = levels, LevelCommonReformatOperator(dimension)
-        self.level_alpha1 = LevelAlpha1DetachedSeriesOperator(dimension, level_alpha1)
-        self.level_others = LevelOthersDetachedSeriesOperator(dimension, level_others)
+        self.level_alpha1 = LevelAlpha1SeparateSeriesOperator(dimension, level_alpha1)
+        self.level_others = LevelOthersSeparateSeriesOperator(dimension, level_others)
 
     def forward(self, data: numpy.ndarray) -> Tuple[numpy.ndarray, List[Tuple[Tuple[numpy.ndarray, ...], ...]]]:
         res = []
