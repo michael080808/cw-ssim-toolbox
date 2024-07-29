@@ -2,8 +2,8 @@ from typing import List, Tuple
 
 import cupy
 
-from .multidim import LevelAlpha1MultidimOperator
-from .multidim import LevelOthersMultidimOperator
+from .detached_series import LevelAlpha1DetachedSeriesOperator
+from .detached_series import LevelOthersDetachedSeriesOperator
 from .reformat import LevelCommonReformatOperator
 from .wavelets import BiorthogonalWavelet, OrthogonalWavelet
 
@@ -12,8 +12,8 @@ class DualTreeComplexWaveletTransform:
     def __init__(self, levels: int, dimension: int, level_alpha1: BiorthogonalWavelet, level_others: OrthogonalWavelet):
         assert levels > 0 and dimension > 0
         self.levels, self.level_common = levels, LevelCommonReformatOperator(dimension)
-        self.level_alpha1 = LevelAlpha1MultidimOperator(dimension, level_alpha1)
-        self.level_others = LevelOthersMultidimOperator(dimension, level_others)
+        self.level_alpha1 = LevelAlpha1DetachedSeriesOperator(dimension, level_alpha1)
+        self.level_others = LevelOthersDetachedSeriesOperator(dimension, level_others)
 
     def forward(self, data: cupy.ndarray) -> Tuple[cupy.ndarray, List[Tuple[Tuple[cupy.ndarray, ...], ...]]]:
         res = []

@@ -6,12 +6,12 @@ from typing import Tuple, Union
 
 import numpy
 
-from .monoaxis import LevelAlpha1MonoAxisOperator
-from .monoaxis import LevelOthersMonoAxisOperator
+from .detached_atomic import LevelAlpha1MonoAxisOperator
+from .detached_atomic import LevelOthersMonoAxisOperator
 from .wavelets import BiorthogonalWavelet, OrthogonalWavelet
 
 
-class _LevelBasicMultidimOperator(ABC, metaclass=ABCMeta):
+class _LevelBasicDetachedSeriesOperator(ABC, metaclass=ABCMeta):
     lo_pass_channelizer: Union[LevelAlpha1MonoAxisOperator, LevelOthersMonoAxisOperator]
     hi_pass_channelizer: Union[LevelAlpha1MonoAxisOperator, LevelOthersMonoAxisOperator]
     lo_pass_synthesiser: Union[LevelAlpha1MonoAxisOperator, LevelOthersMonoAxisOperator]
@@ -44,7 +44,7 @@ class _LevelBasicMultidimOperator(ABC, metaclass=ABCMeta):
         return buffer[0]
 
 
-class LevelAlpha1MultidimOperator(_LevelBasicMultidimOperator):
+class LevelAlpha1DetachedSeriesOperator(_LevelBasicDetachedSeriesOperator):
     def __init__(self, n: int, inst: BiorthogonalWavelet):
         super().__init__(n)
         lo_pass_channelizer, hi_pass_channelizer, lo_pass_synthesiser, hi_pass_synthesiser = inst.wavelets
@@ -54,7 +54,7 @@ class LevelAlpha1MultidimOperator(_LevelBasicMultidimOperator):
         self.hi_pass_synthesiser = LevelAlpha1MonoAxisOperator(hi_pass_synthesiser)
 
 
-class LevelOthersMultidimOperator(_LevelBasicMultidimOperator):
+class LevelOthersDetachedSeriesOperator(_LevelBasicDetachedSeriesOperator):
     def __init__(self, n: int, inst: OrthogonalWavelet):
         super().__init__(n)
         lo_pass_channelizer_a, lo_pass_channelizer_b, hi_pass_channelizer_a, hi_pass_channelizer_b, lo_pass_synthesiser_a, lo_pass_synthesiser_b, hi_pass_synthesiser_a, hi_pass_synthesiser_b = inst.wavelets

@@ -6,7 +6,7 @@ import cupyx.scipy.ndimage
 import numpy
 
 
-class _LevelBasicMonoAxisOperator(ABC, metaclass=ABCMeta):
+class _LevelBasicDetachedAtomicOperator(ABC, metaclass=ABCMeta):
     @abstractmethod
     def forward(self, tensor: cupy.ndarray, axis: int) -> cupy.ndarray:
         return cupy.asarray(tensor) if not isinstance(tensor, cupy.ndarray) else tensor
@@ -16,7 +16,7 @@ class _LevelBasicMonoAxisOperator(ABC, metaclass=ABCMeta):
         return cupy.asarray(tensor) if not isinstance(tensor, cupy.ndarray) else tensor
 
 
-class LevelAlpha1MonoAxisOperator(_LevelBasicMonoAxisOperator):
+class LevelAlpha1DetachedAtomicOperator(_LevelBasicDetachedAtomicOperator):
     def __init__(self, kernel: numpy.ndarray):
         self.kernel = cupy.asarray(kernel).flatten()
 
@@ -29,7 +29,7 @@ class LevelAlpha1MonoAxisOperator(_LevelBasicMonoAxisOperator):
         return cupyx.scipy.ndimage.convolve1d(tensor, self.kernel, axis=axis, mode='reflect')
 
 
-class LevelOthersMonoAxisOperator(_LevelBasicMonoAxisOperator):
+class LevelOthersDetachedAtomicOperator(_LevelBasicDetachedAtomicOperator):
     def __init__(self, coef_a: numpy.ndarray, coef_b: numpy.ndarray):
         assert len(coef_a) == len(coef_b)
         assert len(coef_a) % 0x02 == 0x00
