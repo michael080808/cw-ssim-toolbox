@@ -6,16 +6,16 @@ from typing import Tuple, Union
 
 import numpy
 
-from .kernel import LevelAlpha1SeparateKernelOperator
-from .kernel import LevelOthersSeparateKernelOperator
+from .kernel import LevelAlpha1KernelOperator
+from .kernel import LevelOthersKernelOperator
 from ..wavelets import BiorthogonalWavelet, OrthogonalWavelet
 
 
-class _LevelBasicSeparateSeriesOperator(ABC, metaclass=ABCMeta):
-    lo_pass_channelizer: Union[LevelAlpha1SeparateKernelOperator, LevelOthersSeparateKernelOperator]
-    hi_pass_channelizer: Union[LevelAlpha1SeparateKernelOperator, LevelOthersSeparateKernelOperator]
-    lo_pass_synthesiser: Union[LevelAlpha1SeparateKernelOperator, LevelOthersSeparateKernelOperator]
-    hi_pass_synthesiser: Union[LevelAlpha1SeparateKernelOperator, LevelOthersSeparateKernelOperator]
+class _LevelBasicSeriesOperator(ABC, metaclass=ABCMeta):
+    lo_pass_channelizer: Union[LevelAlpha1KernelOperator, LevelOthersKernelOperator]
+    hi_pass_channelizer: Union[LevelAlpha1KernelOperator, LevelOthersKernelOperator]
+    lo_pass_synthesiser: Union[LevelAlpha1KernelOperator, LevelOthersKernelOperator]
+    hi_pass_synthesiser: Union[LevelAlpha1KernelOperator, LevelOthersKernelOperator]
 
     def __init__(self, n: int):
         assert n > 0
@@ -44,21 +44,21 @@ class _LevelBasicSeparateSeriesOperator(ABC, metaclass=ABCMeta):
         return buffer[0]
 
 
-class LevelAlpha1SeparateSeriesOperator(_LevelBasicSeparateSeriesOperator):
+class LevelAlpha1SeriesOperator(_LevelBasicSeriesOperator):
     def __init__(self, n: int, inst: BiorthogonalWavelet):
         super().__init__(n)
         lo_pass_channelizer, hi_pass_channelizer, lo_pass_synthesiser, hi_pass_synthesiser = inst.wavelets
-        self.lo_pass_channelizer = LevelAlpha1SeparateKernelOperator(lo_pass_channelizer)
-        self.hi_pass_channelizer = LevelAlpha1SeparateKernelOperator(hi_pass_channelizer)
-        self.lo_pass_synthesiser = LevelAlpha1SeparateKernelOperator(lo_pass_synthesiser)
-        self.hi_pass_synthesiser = LevelAlpha1SeparateKernelOperator(hi_pass_synthesiser)
+        self.lo_pass_channelizer = LevelAlpha1KernelOperator(lo_pass_channelizer)
+        self.hi_pass_channelizer = LevelAlpha1KernelOperator(hi_pass_channelizer)
+        self.lo_pass_synthesiser = LevelAlpha1KernelOperator(lo_pass_synthesiser)
+        self.hi_pass_synthesiser = LevelAlpha1KernelOperator(hi_pass_synthesiser)
 
 
-class LevelOthersSeparateSeriesOperator(_LevelBasicSeparateSeriesOperator):
+class LevelOthersSeriesOperator(_LevelBasicSeriesOperator):
     def __init__(self, n: int, inst: OrthogonalWavelet):
         super().__init__(n)
         lo_pass_channelizer_a, lo_pass_channelizer_b, hi_pass_channelizer_a, hi_pass_channelizer_b, lo_pass_synthesiser_a, lo_pass_synthesiser_b, hi_pass_synthesiser_a, hi_pass_synthesiser_b = inst.wavelets
-        self.lo_pass_channelizer = LevelOthersSeparateKernelOperator(lo_pass_channelizer_b, lo_pass_channelizer_a)
-        self.hi_pass_channelizer = LevelOthersSeparateKernelOperator(hi_pass_channelizer_b, hi_pass_channelizer_a)
-        self.lo_pass_synthesiser = LevelOthersSeparateKernelOperator(lo_pass_synthesiser_b, lo_pass_synthesiser_a)
-        self.hi_pass_synthesiser = LevelOthersSeparateKernelOperator(hi_pass_synthesiser_b, hi_pass_synthesiser_a)
+        self.lo_pass_channelizer = LevelOthersKernelOperator(lo_pass_channelizer_b, lo_pass_channelizer_a)
+        self.hi_pass_channelizer = LevelOthersKernelOperator(hi_pass_channelizer_b, hi_pass_channelizer_a)
+        self.lo_pass_synthesiser = LevelOthersKernelOperator(lo_pass_synthesiser_b, lo_pass_synthesiser_a)
+        self.hi_pass_synthesiser = LevelOthersKernelOperator(hi_pass_synthesiser_b, hi_pass_synthesiser_a)
