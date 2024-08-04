@@ -3,8 +3,8 @@ from typing import List, Tuple
 import numpy
 
 from .reformat import LevelCommonReformatOperator
-from .separate.series import LevelAlpha1SeparateSeriesOperator
-from .separate.series import LevelOthersSeparateSeriesOperator
+from .operator.series import LevelAlpha1SeparateSeriesOperator
+from .operator.series import LevelOthersSeparateSeriesOperator
 from .wavelets import BiorthogonalWavelet, OrthogonalWavelet
 
 
