@@ -42,7 +42,7 @@ class _LevelBasicKernelOperator(ABC, metaclass=ABCMeta):
     def tensor_post_op(cls, tensor: Tensor, axis: int, shape: Sequence[int]) -> Tensor:
         tensor = tensor.squeeze()
         if len(shape) > 3:
-            tensor = tensor.unflatten(0, shape[:-2])
+            tensor = tensor.unflatten(0, shape[:-1])
         return tensor.movedim(-1, axis)
 
     @abstractmethod
