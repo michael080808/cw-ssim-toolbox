@@ -8,6 +8,10 @@
     * Dual Tree-Complex Wavelet Transform (DT-CWT)
 
 
+* 为了方便进行比较，同时实现了UIQI/SSIM和MS-SSIM
+* For better comparison, the toolbox also put UIQI/SSIM and MS-SSIM in the toolbox.
+
+
 * 特别感谢[Nick Kingsbury教授](http://www-sigproc.eng.cam.ac.uk/Main/NGK)的工作以及[dtcwt_matlab](https://github.com/timseries/dtcwt_matlab)项目分享的Matlab代码
 * Special Thanks for [Prof. Nick Kingsbury](http://www-sigproc.eng.cam.ac.uk/Main/NGK) and the code from [dtcwt_matlab](https://github.com/timseries/dtcwt_matlab) repository.
 
@@ -48,9 +52,29 @@
 * 各部分模块化，方便导入，易于扩展
 * All the module are independent with each other. Easy to import and extent.
 
-## 代码效果（Visuals)
-
 ## 使用方法（Usage)
+
+* 更多用法可以参考[experiment.py](./experiment.py)
+* More usages can reference [experiment.py](./experiment.py).
+
+```python
+import skimage.io
+import torch
+
+import ssimlibs.torch
+
+ssim = ssimlibs.torch.CwSSIM(
+    backend='DualTree',
+    levels=4,
+    level_alpha1=ssimlibs.torch.NearSymmetricT13T19Wavelet(),
+    level_others=ssimlibs.torch.QShiftT14Wavelet())
+if __name__ == '__main__':
+    a = skimage.util.img_as_float64(skimage.io.imread('pictures/elephant.jpg'))
+    b = skimage.util.noise.random_noise(a, mode='speckle')
+    with torch.device(0):
+        result = ssim(torch.tensor(a), torch.tensor(b))
+    print(float(result))
+```
 
 ## 特殊说明（Notes)
 
